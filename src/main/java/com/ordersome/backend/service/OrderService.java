@@ -9,7 +9,6 @@ import com.ordersome.backend.model.User;
 import com.ordersome.backend.repository.FoodRepository;
 import com.ordersome.backend.repository.OrderRepository;
 import com.ordersome.backend.repository.UserRepository;
-import com.ordersome.backend.specification.OrderSpecification;
 import com.ordersome.backend.util.ResponseBody;
 import io.swagger.v3.core.util.Json;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +44,7 @@ public class OrderService {
             Order order = new Order(user, food);
             Order savedOrder = orderRepository.save(order);
             OrderResDto responseData = new OrderResDto(
+                    savedOrder.getUser().getEmail(),
                     savedOrder.getUser().getFirstName() + " " + savedOrder.getUser().getLastName(),
                     savedOrder.getFood().getName(),
                     savedOrder.getFood().getPrice(),
@@ -66,7 +66,9 @@ public class OrderService {
                 return ResponseBody.send(ResponseMessages.ORDER_NOT_FOUND(), null, HttpStatus.NOT_FOUND);
             }
             orders.forEach(order -> {
-                orderResDtos.add(new OrderResDto(order.getUser().getFirstName() + " " + order.getUser().getLastName(), order.getFood().getName(), order.getFood().getPrice(),order.getCreated_at()));
+                orderResDtos.add(new OrderResDto(
+                        order.getUser().getEmail(),order.getUser().getFirstName() + " " + order.getUser().getLastName(),
+                        order.getFood().getName(), order.getFood().getPrice(),order.getCreated_at()));
             });
             return ResponseBody.sendBody(ResponseMessages.GET_SUCCESS(), orderResDtos, HttpStatus.OK);
         } catch (Exception e) {
@@ -82,7 +84,11 @@ public class OrderService {
                 return ResponseBody.send(ResponseMessages.ORDER_NOT_FOUND(), null, HttpStatus.NOT_FOUND);
             }
             orders.forEach(order -> {
-                orderResDtos.add(new OrderResDto(order.getUser().getFirstName() + " " + order.getUser().getLastName(), order.getFood().getName(), order.getFood().getPrice(),order.getCreated_at()));
+                orderResDtos.add(
+                        new OrderResDto(
+                            order.getUser().getEmail(),order.getUser().getFirstName() + " " + order.getUser().getLastName(),
+                            order.getFood().getName(), order.getFood().getPrice(),order.getCreated_at())
+                );
             });
             return ResponseBody.sendBody(ResponseMessages.GET_SUCCESS(), orderResDtos, HttpStatus.OK);
         } catch (Exception e) {
